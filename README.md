@@ -24,7 +24,8 @@ _Sẽ cập nhật sau khi phân tích._
 
 | Mục | Giá trị |
 |---|---|
-| Nguồn | Thư viện [`vnstock`](https://github.com/thinh-vu/vnstock) |
+| Nguồn | API công khai của Vietcap (VCI), gọi trực tiếp bằng `requests`. Không dùng `vnstock` vì gói này bị PyPI cách ly từ 24/09/2026 |
+| Giá | Giá đã điều chỉnh (cổ tức, chia tách), đơn vị đồng |
 | Rổ cổ phiếu | VN100 (thử nghiệm trên VN30) |
 | Giai đoạn | 01/01/2021 → 30/09/2026 (ngày chốt cố định) |
 | Quy mô ước tính | ~120.000 dòng giá, ~500 dòng chỉ số tài chính |
@@ -56,7 +57,14 @@ pip install -r requirements.txt
 copy .env.example .env   # rồi điền mật khẩu DB
 ```
 
-_Các lệnh chạy pipeline sẽ bổ sung khi viết xong script._
+Chạy pipeline:
+
+```bash
+python src/crawl_stock_list.py   # danh sách mã + ngành -> data/raw/stock_list.csv
+python src/crawl_prices.py       # OHLCV theo ngày -> data/raw/prices/
+```
+
+Đổi rổ cổ phiếu (`VN30` / `VN100`) và ngày chốt trong `src/config.py`.
 
 ## Cấu trúc thư mục
 

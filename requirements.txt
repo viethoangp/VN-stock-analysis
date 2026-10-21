@@ -1,17 +1,14 @@
-# Sau khi cài xong và chạy thử được, ghim phiên bản bằng:
-#   pip freeze | findstr /i "vnstock pandas numpy pyarrow sqlalchemy psycopg2 matplotlib seaborn scikit-learn python-dotenv"
-# rồi thay các dòng dưới bằng dạng `ten_thu_vien==x.y.z`.
-# Đặc biệt PHẢI ghim vnstock vì cách gọi hàm thay đổi giữa các phiên bản.
-
-vnstock
-pandas
-numpy
-pyarrow
-sqlalchemy
-psycopg2-binary
-python-dotenv
-matplotlib
-seaborn
-scikit-learn
-jupyter
-openpyxl
+# Python 3.14. Không dùng vnstock: gói này bị PyPI cách ly từ 24/09/2026,
+# dự án gọi thẳng API công khai của Vietcap (xem src/vci.py).
+requests==2.34.2
+pandas==3.0.6
+numpy==2.5.4
+pyarrow==26.0.0
+SQLAlchemy==2.1.5
+psycopg2-binary==2.9.13
+python-dotenv==1.2.4
+matplotlib==3.11.2
+seaborn==0.13.2
+scikit-learn==1.9.1
+jupyter==1.1.1
+openpyxl==3.1.5

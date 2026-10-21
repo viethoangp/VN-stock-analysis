@@ -18,7 +18,6 @@ END_DATE = "2026-09-30"  # ngày chốt dữ liệu cố định, để kết qu
 INDEX_CODES = ["VNINDEX", "VN30"]
 
 # --- Crawl ---
-DATA_SOURCE = "VCI"      # nguồn dữ liệu của vnstock; đổi nếu nguồn này lỗi
 SLEEP_SECONDS = 1.0      # nghỉ giữa các lần gọi API
 MAX_RETRIES = 3
 
