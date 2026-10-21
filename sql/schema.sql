@@ -1,0 +1,3 @@
+-- Star schema cho dự án VN stock analysis (PostgreSQL)
+-- Viết vào Ngày 3 (task 3.2). Thiết kế chi tiết: docs/project_plan.md mục 8.
+-- Thứ tự tạo: dim_stock, dim_date → fact_price, fact_index_price, fact_financials

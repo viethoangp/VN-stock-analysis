@@ -1,0 +1,17 @@
+# Sau khi cài xong và chạy thử được, ghim phiên bản bằng:
+#   pip freeze | findstr /i "vnstock pandas numpy pyarrow sqlalchemy psycopg2 matplotlib seaborn scikit-learn python-dotenv"
+# rồi thay các dòng dưới bằng dạng `ten_thu_vien==x.y.z`.
+# Đặc biệt PHẢI ghim vnstock vì cách gọi hàm thay đổi giữa các phiên bản.
+
+vnstock
+pandas
+numpy
+pyarrow
+sqlalchemy
+psycopg2-binary
+python-dotenv
+matplotlib
+seaborn
+scikit-learn
+jupyter
+openpyxl

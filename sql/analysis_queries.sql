@@ -1,0 +1,3 @@
+-- Truy vấn phân tích (tối thiểu 15). Viết vào Ngày 5.
+-- Mỗi truy vấn: số thứ tự, câu hỏi nó trả lời (Q1-Q5), kỹ thuật dùng (CTE, window function...).
+-- Danh sách dự kiến: docs/project_plan.md mục 10, Ngày 5.
