@@ -12,10 +12,11 @@ LOG_DIR = ROOT / "logs"
 
 # --- Phạm vi dữ liệu ---
 # Giai đoạn thử nghiệm dùng "VN30", khi pipeline ổn thì đổi sang "VN100".
-UNIVERSE = "VN30"
+UNIVERSE = "VN100"
 START_DATE = "2021-01-01"
 END_DATE = "2026-09-30"  # ngày chốt dữ liệu cố định, để kết quả tái lập được
 INDEX_CODES = ["VNINDEX", "VN30"]
+FIN_START_YEAR, FIN_END_YEAR = 2020, 2025  # BCTC năm; cần FY2020 để ghép với lợi suất 2021
 
 # --- Crawl ---
 SLEEP_SECONDS = 1.0      # nghỉ giữa các lần gọi API

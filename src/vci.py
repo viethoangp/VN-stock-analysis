@@ -7,6 +7,7 @@ import requests
 from config import MAX_RETRIES, SLEEP_SECONDS
 
 BASE = "https://trading.vietcap.com.vn/api"
+IQ = "https://iq.vietcap.com.vn/api/iq-insight-service/v1/company"  # BCTC
 HEADERS = {
     "Referer": "https://trading.vietcap.com.vn/",
     "Origin": "https://trading.vietcap.com.vn",
@@ -19,7 +20,8 @@ def call(method, path, **kwargs):
     """Gọi API, thử lại tối đa MAX_RETRIES lần, nghỉ SLEEP_SECONDS giữa các lần gọi."""
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            r = requests.request(method, BASE + path, headers=HEADERS, timeout=30, **kwargs)
+            url = path if path.startswith("http") else BASE + path
+            r = requests.request(method, url, headers=HEADERS, timeout=30, **kwargs)
             r.raise_for_status()
             time.sleep(SLEEP_SECONDS)
             return r.json()
@@ -44,3 +46,11 @@ def daily_ohlcv(symbol, to_ts, count_back):
     body = {"timeFrame": "ONE_DAY", "symbols": [symbol], "to": to_ts, "countBack": count_back}
     data = call("POST", "/chart/OHLCChart/gap-chart", json=body)
     return data[0] if data else None
+
+
+def company(symbol, path):
+    """API BCTC (iq.vietcap). path VD: "/financial-statement?section=BALANCE_SHEET", "/statistics-financial"."""
+    r = call("GET", f"{IQ}/{symbol}{path}")
+    if not r.get("successful"):
+        raise RuntimeError(f"{symbol}{path}: {r.get('msg')}")
+    return r["data"]

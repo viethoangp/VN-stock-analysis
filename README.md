@@ -26,16 +26,16 @@ _Sẽ cập nhật sau khi phân tích._
 |---|---|
 | Nguồn | API công khai của Vietcap (VCI), gọi trực tiếp bằng `requests`. Không dùng `vnstock` vì gói này bị PyPI cách ly từ 24/09/2026 |
 | Giá | Giá đã điều chỉnh (cổ tức, chia tách), đơn vị đồng |
-| Rổ cổ phiếu | VN100 (thử nghiệm trên VN30) |
-| Giai đoạn | 01/01/2021 → 30/09/2026 (ngày chốt cố định) |
-| Quy mô ước tính | ~120.000 dòng giá, ~500 dòng chỉ số tài chính |
+| Rổ cổ phiếu | VN100 (100 mã, gồm 30 mã VN30 và 18 ngân hàng) + VN-Index, VN30 index |
+| Giai đoạn | Giá: 01/01/2021 → 30/09/2026 (ngày chốt cố định). BCTC năm: FY2020 → FY2025 |
+| Quy mô | 138.703 dòng giá, ~600 dòng BCTC năm |
 
 ## Phương pháp và công cụ
 
 Python (pandas, scikit-learn) · PostgreSQL · Excel · Power BI · Git
 
 ```
-vnstock → data/raw → clean (Python) → PostgreSQL (star schema) → SQL / Notebook / Excel / Power BI → Insight
+API Vietcap → data/raw → clean (Python) → PostgreSQL (star schema) → SQL / Notebook / Excel / Power BI → Insight
 ```
 
 ## Hạn chế
@@ -62,6 +62,7 @@ Chạy pipeline:
 ```bash
 python src/crawl_stock_list.py   # danh sách mã + ngành -> data/raw/stock_list.csv
 python src/crawl_prices.py       # OHLCV theo ngày -> data/raw/prices/
+python src/crawl_financials.py   # BCTC + chỉ số tài chính -> data/raw/financials/
 ```
 
 Đổi rổ cổ phiếu (`VN30` / `VN100`) và ngày chốt trong `src/config.py`.
