@@ -25,12 +25,17 @@ def prices():
     df["date"] = pd.to_datetime(df.date).dt.date
     df["crawled_at"] = pd.to_datetime(df.crawled_at)
     df["volume"] = df.volume.astype("int64")
-    # API thiếu giá trị giao dịch ở nhiều phiên (chủ yếu trước 15/09/2022) -> tính lại.
-    df["value_mil_vnd"] = df.value_mil_vnd.fillna(df.close * df.volume / 1e6)
+    # Giá trị giao dịch của API thiếu 28% phiên và lệch đơn vị trước 2025 (gấp ~20–90 lần, có phiên = 0)
+    # -> tính lại toàn bộ để thống nhất. Dùng giá điều chỉnh nên giá trị quá khứ thấp hơn thực tế vài %.
+    # Chỉ số: close là điểm nên không nhân được; số của API tính bằng đồng đến hết 2025, triệu đồng từ 2026.
+    is_index = df.ticker.isin(INDEX_CODES)
+    api = df.value_mil_vnd
+    df["value_mil_vnd"] = (df.close * df.volume / 1e6).where(~is_index, api.where(api < 1e9, api / 1e6))
+    v = df.loc[is_index, "value_mil_vnd"]
+    assert v.between(1e6, 1e8).all(), f"Giá trị giao dịch chỉ số ngoài 1.000–100.000 tỷ: {v.min()}–{v.max()}"
     bad = (df.close < df.low) | (df.close > df.high)
     print(f"Kẹp {bad.sum()} dòng close nằm ngoài [low, high]")
     df["close"] = df.close.clip(df.low, df.high)
-    is_index = df.ticker.isin(INDEX_CODES)
     index = df[is_index].rename(columns={"ticker": "index_code"})
     return df[~is_index].reset_index(drop=True), index.reset_index(drop=True)
 

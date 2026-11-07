@@ -78,7 +78,7 @@ CREATE TABLE fact_financials (
 );
 
 COMMENT ON COLUMN fact_price.close IS 'Giá đóng cửa đã điều chỉnh (cổ tức, chia tách), đơn vị đồng';
-COMMENT ON COLUMN fact_price.value_mil_vnd IS 'Giá trị giao dịch, triệu đồng; phiên API thiếu được tính lại = close * volume';
+COMMENT ON COLUMN fact_price.value_mil_vnd IS 'Giá trị giao dịch, triệu đồng = close * volume / 1e6 (không dùng số của API vì lệch đơn vị trước 2025); dùng giá điều chỉnh nên quá khứ thấp hơn thực tế vài %';
 COMMENT ON COLUMN fact_financials.available_date IS 'Ngày công bố BCTC (publicDate từ API), dùng để tránh look-ahead bias';
 COMMENT ON COLUMN fact_financials.revenue IS 'Tỷ đồng. Ngân hàng: tổng thu nhập hoạt động; bảo hiểm: doanh thu phí bảo hiểm';
 COMMENT ON COLUMN fact_financials.eps IS 'Lãi cơ bản trên cổ phiếu, đồng';
