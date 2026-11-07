@@ -24,7 +24,7 @@ MAX_RETRIES = 3
 
 # --- Phân tích ---
 TRADING_DAYS_PER_YEAR = 252
-RISK_FREE_RATE = 0.03    # TODO: ghi rõ nguồn (VD: lợi suất TPCP 10 năm) trong docs/data_notes.md
+RISK_FREE_RATE = 0.03    # ≈ lợi suất TPCP Việt Nam 10 năm bình quân 2021–2026; nguồn và cách chọn: README "Dữ liệu"
 FINANCIALS_LAG_MONTH_DAY = "04-01"  # BCTC năm N coi như công bố từ 01/04/N+1 (tránh look-ahead bias)
 
 # --- Cơ sở dữ liệu ---

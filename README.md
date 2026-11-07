@@ -29,6 +29,7 @@ _Sẽ cập nhật sau khi phân tích._
 | Rổ cổ phiếu | VN100 (100 mã, gồm 30 mã VN30 và 18 ngân hàng) + VN-Index, VN30 index |
 | Giai đoạn | Giá: 01/01/2021 → 30/09/2026 (ngày chốt cố định). BCTC năm: FY2020 → FY2025 |
 | Quy mô | 138.703 dòng giá, ~600 dòng BCTC năm |
+| Lãi suất phi rủi ro | 3%/năm, xấp xỉ lợi suất trái phiếu Chính phủ 10 năm bình quân 2021–2026 (2025: 3,1–3,8%; đầu 2026: ~4,3%, theo kết quả đấu thầu và Trading Economics) |
 | Giai đoạn thị trường | Gán theo đỉnh/đáy VN-Index (đảo chiều ≥ 15%; tăng < 25%/năm coi là đi ngang). Nhãn mô tả nhìn lại, không dùng để dự đoán |
 
 ## Phương pháp và công cụ
