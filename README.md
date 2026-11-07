@@ -41,7 +41,7 @@ API Vietcap → data/raw → clean (Python) → PostgreSQL (star schema) → SQL
 ## Hạn chế
 
 - Survivorship bias: dùng danh sách VN100 hiện tại.
-- Ngày công bố BCTC là giả định (01/04 năm sau).
+- Ngày công bố BCTC lấy từ API (`publicDate`); nếu thiếu thì giả định 01/04 năm sau.
 - Chưa tính phí giao dịch và thuế.
 - Tương quan không phải nhân quả.
 - Dự án mang tính học tập, không phải khuyến nghị đầu tư.
@@ -63,6 +63,8 @@ Chạy pipeline:
 python src/crawl_stock_list.py   # danh sách mã + ngành -> data/raw/stock_list.csv
 python src/crawl_prices.py       # OHLCV theo ngày -> data/raw/prices/
 python src/crawl_financials.py   # BCTC + chỉ số tài chính -> data/raw/financials/
+python src/clean.py              # làm sạch -> data/processed/*.parquet
+python src/load_to_db.py         # tạo bảng (sql/schema.sql), nạp PostgreSQL, kiểm tra toàn vẹn
 ```
 
 Đổi rổ cổ phiếu (`VN30` / `VN100`) và ngày chốt trong `src/config.py`.

@@ -28,5 +28,6 @@ RISK_FREE_RATE = 0.03    # TODO: ghi rõ nguồn (VD: lợi suất TPCP 10 năm)
 FINANCIALS_LAG_MONTH_DAY = "04-01"  # BCTC năm N coi như công bố từ 01/04/N+1 (tránh look-ahead bias)
 
 # --- Cơ sở dữ liệu ---
+os.environ.setdefault("DISABLE_SQLALCHEMY_CEXT_RUNTIME", "1")  # Windows Application Control chặn DLL C của SQLAlchemy
 load_dotenv(ROOT / ".env")
 DB_URL = os.getenv("DB_URL", "")
