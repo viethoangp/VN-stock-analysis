@@ -48,6 +48,10 @@ FROM fact_financials
 WHERE available_date > MAKE_DATE(fiscal_year + 1, 4, 30)
 ORDER BY available_date;
 
+-- 7b. Giai đoạn thị trường (gán theo đỉnh/đáy VN-Index, xem src/metrics.py): số phiên và khoảng ngày
+SELECT market_regime, COUNT(*) FILTER (WHERE is_trading_day) AS sessions, MIN(date) AS first_day, MAX(date) AS last_day
+FROM dim_date GROUP BY 1 ORDER BY 2 DESC;
+
 -- 8. Đối chiếu tay với BCTC đã công bố (FPT LNST 2024 = 9.427 tỷ, VCB LNTT 2024 = 42.236 tỷ)
 SELECT ticker, fiscal_year, revenue, profit_before_tax, net_income, roe, pe
 FROM fact_financials

@@ -74,7 +74,73 @@ def yearly_metrics(prices, index_close, rf=RISK_FREE_RATE):
     return pd.DataFrame(rows)
 
 
+def turning_points(close, threshold=0.15):
+    """Đỉnh/đáy: xu hướng đổi chiều khi giá đi ngược >= threshold từ cực trị gần nhất.
+
+    Trả danh sách ngày gồm ngày đầu, các đỉnh/đáy đã xác nhận, ngày cuối.
+    """
+    pivots, trend = [close.index[0]], None
+    hi = lo = close.index[0]
+    for d, x in close.items():
+        if trend != "down" and x > close[hi]:
+            hi = d
+        if trend != "up" and x < close[lo]:
+            lo = d
+        if trend != "down" and x <= close[hi] * (1 - threshold):
+            if hi != pivots[-1]:
+                pivots.append(hi)
+            trend, lo = "down", d
+        elif trend != "up" and x >= close[lo] * (1 + threshold):
+            if lo != pivots[-1]:
+                pivots.append(lo)
+            trend, hi = "up", d
+    if close.index[-1] != pivots[-1]:
+        pivots.append(close.index[-1])
+    return pivots
+
+
+def market_regimes(close, threshold=0.15, flat_below=0.25):
+    """Chia giai đoạn theo đỉnh/đáy: đoạn đi xuống = Giảm; đoạn đi lên có lợi suất năm hóa
+    > flat_below = Tăng, còn lại = Đi ngang. Đoạn đầu/cuối chưa đủ threshold để xác nhận xu hướng
+    cũng là Đi ngang. Nhãn mô tả nhìn lại, KHÔNG dùng làm đặc trưng dự đoán.
+
+    Trả (bảng các đoạn, nhãn theo từng ngày).
+    """
+    p = turning_points(close, threshold)
+    segs = []
+    for a, b in zip(p, p[1:]):
+        n = close.index.get_loc(b) - close.index.get_loc(a)
+        change = close[b] / close[a] - 1
+        ann = (1 + change) ** (N / n) - 1
+        if abs(change) < threshold or 0 <= ann <= flat_below:
+            label = "Đi ngang"
+        else:
+            label = "Giảm" if change < 0 else "Tăng"
+        segs.append({"start": a, "end": b, "sessions": n, "change": change, "annualized": ann, "regime": label})
+    segs = pd.DataFrame(segs)
+    labels = pd.Series(index=close.index, dtype=object)
+    for s in segs.itertuples():
+        labels.loc[s.start:s.end] = s.regime  # ngày đỉnh/đáy thuộc đoạn sau (gán đè)
+    return segs, labels
+
+
 def _self_test():
+    # Giai đoạn: lên 30% -> xuống 20% -> lên 25%, có nhiễu nhỏ hơn ngưỡng
+    path = np.concatenate([np.linspace(100, 130, 60), np.linspace(130, 104, 40), np.linspace(104, 130, 60)])
+    path = path * (1 + 0.01 * np.sin(np.arange(160)))
+    c = pd.Series(path, index=pd.bdate_range("2021-01-01", periods=160))
+    segs, lab = market_regimes(c)
+    assert list(segs.regime) == ["Tăng", "Giảm", "Tăng"], segs
+    assert lab.notna().all()
+    # Bắt đầu bằng xu hướng giảm
+    segs, _ = market_regimes(pd.Series(path[::-1], index=c.index))
+    assert list(segs.regime) == ["Giảm", "Tăng", "Giảm"], segs
+    # Đi lên chậm (25% trong 2 năm) và dao động dưới ngưỡng -> Đi ngang
+    slow = pd.Series(np.linspace(100, 125, 504), index=pd.bdate_range("2021-01-01", periods=504))
+    assert list(market_regimes(slow)[0].regime) == ["Đi ngang"]
+    assert list(market_regimes(slow.iloc[:100] * 0 + 100 + np.sin(np.arange(100)))[0].regime) == ["Đi ngang"]
+
+
     days = pd.bdate_range("2021-01-01", periods=253)
     up = pd.Series(100 * 1.01 ** np.arange(253), index=days)
     assert np.allclose(daily_returns(up), 0.01)

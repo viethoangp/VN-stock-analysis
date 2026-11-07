@@ -8,6 +8,7 @@ import pandas as pd
 
 from config import (END_DATE, FIN_END_YEAR, FIN_START_YEAR, FINANCIALS_LAG_MONTH_DAY, INDEX_CODES,
                     PROCESSED_DIR, RAW_DIR, START_DATE)
+from metrics import market_regimes
 
 # Doanh thu theo mẫu BCTC: ngân hàng = tổng thu nhập hoạt động, bảo hiểm = doanh thu phí bảo hiểm.
 REVENUE = {"thuong": "isa3", "chung_khoan": "isa3", "ngan_hang": "isb38", "bao_hiem": "isi103"}
@@ -90,11 +91,13 @@ def dim_stock(templates, price):
 def dim_date(index_price):
     d = pd.date_range(START_DATE, END_DATE)
     iso = d.isocalendar()
-    trading = set(index_price[index_price.index_code == "VNINDEX"].date)
+    vnindex = index_price[index_price.index_code == "VNINDEX"].set_index("date").close
+    # Ngày nghỉ lấy nhãn của phiên gần nhất trước đó (ngày đầu năm chưa có phiên thì lấy phiên sau).
+    regime = market_regimes(vnindex)[1].reindex(d.date).ffill().bfill()
     return pd.DataFrame({
         "date": d.date, "year": d.year, "quarter": d.quarter, "month": d.month,
         "week": iso.week.to_numpy(), "day_of_week": iso.day.to_numpy(),  # 1 = thứ Hai
-        "is_trading_day": [x in trading for x in d.date], "market_regime": None,
+        "is_trading_day": d.isin(pd.to_datetime(vnindex.index)), "market_regime": regime.to_numpy(),
     })
 
 
@@ -126,6 +129,7 @@ def check(t):
     for name in ("fact_price", "fact_index_price"):
         assert set(t[name].date) <= dates, f"{name}: có ngày ngoài dim_date"
     assert t["dim_stock"].fs_template.notna().all(), "Có mã thiếu BCTC"
+    assert t["dim_date"].market_regime.notna().all(), "Có ngày chưa gán market_regime"
     assert (t["fact_financials"].revenue > 0).all(), "Có dòng doanh thu <= 0, kiểm tra ánh xạ REVENUE"
     fin = t["fact_financials"].set_index(["ticker", "fiscal_year"])
     assert abs(fin.loc[("FPT", 2024), "net_income"] - 9427) < 1, "FPT FY2024 lợi nhuận sau thuế lệch"
